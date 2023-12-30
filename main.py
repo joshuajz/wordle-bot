@@ -16,7 +16,7 @@ client = discord.Client(intents=intents)
 
 
 def call_api():
-    return requests.get('https://www.nytimes.com/svc/wordle/v2/2023-12-26.json').json()
+    return requests.get(f'https://www.nytimes.com/svc/wordle/v2/{datetime.date.today().strftime("%Y-%m-%d")}.json').json()
 
 def read_database():
     with open('database.json', 'r') as database:
