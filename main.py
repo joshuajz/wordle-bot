@@ -19,15 +19,20 @@ def call_api():
     return requests.get(f'https://www.nytimes.com/svc/wordle/v2/{datetime.date.today().strftime("%Y-%m-%d")}.json').json()
 
 def read_database():
-    with open('database.json', 'r') as database:
-        data = None
-        if (os.path.isfile(os.getcwd() + '\\database.json')) and (os.path.getsize(os.getcwd() + '\\database.json') > 0):
+    # open(os.getcwd() + '\\database.json', 'a').close()
+    # print("os.path.isfile(os.getcwd() + '\\database.json'", (os.path.isfile(os.getcwd() + '\\database.json')))
+    # print((os.path.getsize(os.getcwd() + '\\database.json') > 0))
+    # print(os.getcwd() + '\\database.json')
+    if (os.path.isfile(os.getcwd() + '/database.json')) and (os.path.getsize(os.getcwd() + '/database.json') > 0):
+        with open('database.json', 'r') as database:
+            # print('database', database.read())
+            data = {}
             data = json.load(database)
-        else:
-            data = {}
-        
-        if not(data):
-            data = {}
+            # print('data', data)
+            if not(data):
+                data = {}
+    else:
+        data = {}
     return data
 
 def read_stats():
@@ -146,13 +151,13 @@ class MyCog(commands.Cog):
     @tasks.loop(seconds=45.0)
     async def checker(self):
         hour, minute = datetime.datetime.now().strftime("%H %M").split(" ")
-        if hour == 11 and (minute == 58 or minute == 59) and self.newest_day != self.wordle_answer['days_since_launch']:
-        # if hour == "02" and (minute == "00" or minute == "01") and self.newest_day != self.wordle_answer['days_since_launch']:
-            self.newest_day = self.wordle_answer['days_since_launch']
-        else:
-            return
         
-        embed = create_embed('Wordle Recap', f'**#{self.wordle_answer["days_since_launch"]}** *{self.wordle_answer["solution"]}* - {self.wordle_answer["print_date"]}', 'orange')
+        # if hour == 11 and (minute == 58 or minute == 59) and self.newest_day != self.wordle_answer['days_since_launch']:
+            # self.newest_day = self.wordle_answer['days_since_launch']
+        # else:
+            # return
+        
+        embed = create_embed('Wordle Recap', f'**#{self.wordle_answer["days_since_launch"]}** ||*{self.wordle_answer["solution"]}*|| - {self.wordle_answer["print_date"]}', 'orange')
         
         guild = await client.fetch_guild(int(os.getenv('server')))
         channel = await guild.fetch_channel(int(os.getenv('channel_id')))
@@ -160,6 +165,10 @@ class MyCog(commands.Cog):
         today = self.today_wordle()
         best_answer = self.best_answer(today)
         worst_answer = self.worst_answer(today)
+        print(best_answer)
+
+        for i in best_answer:
+            print(i)
 
         if len(best_answer) == 1:
             best_answer = best_answer[0]
@@ -168,6 +177,10 @@ class MyCog(commands.Cog):
                 print('s', s)
                 result += "\n" + s
             add_field(embed, f'Winner!', result, True)
+        else:
+            for bf in best_answer:
+                result = f'<@{bf[0]}> with **{(bf[1])["ratio"]}**:'
+                add_field(embed, "I guess there's multiple bitches", result, True)
 
         if len(worst_answer) == 1:
             worst_answer = worst_answer[0]
@@ -220,7 +233,8 @@ async def on_message(message):
     
     entry = {'worldle_date': date, 'ratio': ratio, 'date': str(datetime.datetime.now()), 'board': wordle_board}
 
-    data = read_database()    
+    data = read_database()
+    print(data)
 
     with open('database.json', 'w') as database:
         if str(user_id) in data:
@@ -229,7 +243,8 @@ async def on_message(message):
             data[str(user_id)] = {date: entry}
 
         json.dump(data, database, indent=4)
-
+    print("finished dumping")
+    print(read_database())
 
     
 
