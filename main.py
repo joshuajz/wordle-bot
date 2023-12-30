@@ -108,9 +108,9 @@ class MyCog(commands.Cog):
         stats_data = read_stats()
 
         if 'weekly' in stats_data:
-            stats_data['weekly'][str(self.wordle_answer['days_since_launch'])] = result
+            stats_data['weekly'][str(self.wordle_answer['days_since_launch'])] = {'winner': result[0], 'loser': result[1]}
         else:
-            stats_data['weekly'] = {str(self.wordle_answer['days_since_launch']): result}
+            stats_data['weekly'] = {str(self.wordle_answer['days_since_launch']): {'winner': result[0], 'loser': result[1]}}
         with open('stats.json', 'w') as stats_database:
             json.dump(stats_data, stats_database, indent=4)
         
@@ -126,13 +126,28 @@ class MyCog(commands.Cog):
                 average[0] += int(data[user][str(self.wordle_answer['days_since_launch'])]['ratio'].split('/')[0])
                 average[1] += 1
         
+        stats_data = read_stats()
+
+        if 'daily_group_average' in stats_data:
+            stats_data['daily_group_average'][str(self.wordle_answer['days_since_launch'])] = {
+                'total': average[1],
+                'average': average[0]
+            }
+        else:
+            stats_data['daily_group_average'] = {str(self.wordle_answer['days_since_launch']): {
+                'total': average[1],
+                'average': average[0]
+            }}
+        with open('stats.json', 'w') as stats_database:
+            json.dump(stats_data, stats_database, indent=4)
+        
         return average
 
     @tasks.loop(seconds=45.0)
     async def checker(self):
         hour, minute = datetime.datetime.now().strftime("%H %M").split(" ")
-        if hour == 11 and (minute == 58 or minute == 59) and self.newest_day != self.wordle_answer['days_since_launch']:
-        # if hour == "01" and (minute == "32" or minute == "33") and self.newest_day != self.wordle_answer['days_since_launch']:
+        # if hour == 11 and (minute == 58 or minute == 59) and self.newest_day != self.wordle_answer['days_since_launch']:
+        if hour == "02" and (minute == "00" or minute == "01") and self.newest_day != self.wordle_answer['days_since_launch']:
             self.newest_day = self.wordle_answer['days_since_launch']
         else:
             return
@@ -166,7 +181,6 @@ class MyCog(commands.Cog):
         if len(averages) != 0:
             averages_string = f'<@{averages[0][0]}>: {averages[0][1]}/6'
             for avg in range(1, len(averages), 1):
-                print('avg', avg)
                 averages_string += '\n'
                 averages_string += f'<@{averages[avg][0]}>: {averages[avg][1]}/6'
         add_field(embed, f'Weekly Averages', averages_string, False)
