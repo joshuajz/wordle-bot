@@ -146,8 +146,8 @@ class MyCog(commands.Cog):
     @tasks.loop(seconds=45.0)
     async def checker(self):
         hour, minute = datetime.datetime.now().strftime("%H %M").split(" ")
-        # if hour == 11 and (minute == 58 or minute == 59) and self.newest_day != self.wordle_answer['days_since_launch']:
-        if hour == "02" and (minute == "00" or minute == "01") and self.newest_day != self.wordle_answer['days_since_launch']:
+        if hour == 11 and (minute == 58 or minute == 59) and self.newest_day != self.wordle_answer['days_since_launch']:
+        # if hour == "02" and (minute == "00" or minute == "01") and self.newest_day != self.wordle_answer['days_since_launch']:
             self.newest_day = self.wordle_answer['days_since_launch']
         else:
             return
