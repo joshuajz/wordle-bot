@@ -1,40 +1,45 @@
 {
-    "465798343772078083": {
-        "924": {
-            "worldle_date": "924",
-            "ratio": "4/6",
-            "date": "2023-12-30 07:23:02.549113",
+    "178543252637483009": {
+        "943": {
+            "worldle_date": "943",
+            "ratio": "3/6",
+            "date": "2024-01-27 06:41:51.060646",
             "board": [
-                "\u2b1b\u2b1b\u2b1b\ud83d\udfe8\ud83d\udfe9",
                 "\u2b1b\u2b1b\u2b1b\u2b1b\ud83d\udfe9",
-                "\ud83d\udfe9\u2b1b\ud83d\udfe9\u2b1b\u2b1b",
+                "\u2b1b\ud83d\udfe8\u2b1b\ud83d\udfe8\ud83d\udfe9",
+                "\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9"
+            ]
+        },
+        "952": {
+            "worldle_date": "952",
+            "ratio": "3/6",
+            "date": "2024-01-27 06:42:55.213494",
+            "board": [
+                "\u2b1b\u2b1b\u2b1b\u2b1b\ud83d\udfe9",
+                "\u2b1b\ud83d\udfe8\u2b1b\ud83d\udfe8\ud83d\udfe9",
                 "\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9"
             ]
         }
+        
     },
-    "788998053196726273": {
-        "924": {
-            "worldle_date": "924",
-            "ratio": "5/6",
-            "date": "2023-12-30 07:23:09.046043",
+    "178543252637483008": {
+        "943": {
+            "worldle_date": "943",
+            "ratio": "3/6",
+            "date": "2024-01-27 06:41:51.060646",
             "board": [
-                "\ud83d\udfe9\u2b1b\u2b1b\u2b1b\u2b1b",
-                "\ud83d\udfe9\ud83d\udfe8\u2b1b\u2b1b\ud83d\udfe8",
-                "\ud83d\udfe9\ud83d\udfe9\u2b1b\u2b1b\u2b1b",
-                "\ud83d\udfe9\ud83d\udfe9\ud83d\udfe8\u2b1b\u2b1b",
+                "\u2b1b\u2b1b\u2b1b\u2b1b\ud83d\udfe9",
+                "\u2b1b\ud83d\udfe8\u2b1b\ud83d\udfe8\ud83d\udfe9",
                 "\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9"
             ]
-        }
-    },
-    "517313324908675083": {
-        "924": {
-            "worldle_date": "924",
-            "ratio": "4/6",
-            "date": "2023-12-30 07:25:18.043013",
+        },
+        "952": {
+            "worldle_date": "952",
+            "ratio": "3/6",
+            "date": "2024-01-27 06:42:55.213494",
             "board": [
-                "\u2b1b\u2b1b\u2b1b\ud83d\udfe8\ud83d\udfe9",
-                "\ud83d\udfe8\u2b1b\ud83d\udfe8\ud83d\udfe9\u2b1b",
-                "\ud83d\udfe9\u2b1b\u2b1b\ud83d\udfe9\ud83d\udfe9",
+                "\u2b1b\u2b1b\u2b1b\u2b1b\ud83d\udfe9",
+                "\u2b1b\ud83d\udfe8\u2b1b\ud83d\udfe8\ud83d\udfe9",
                 "\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9\ud83d\udfe9"
             ]
         }
