@@ -53,6 +53,8 @@ class MyCog(commands.Cog):
             'editor': None,
         }
         self.newest_day = None
+        self.wordle_answer = call_api()
+        self.newest_day = self.wordle_answer['days_since_launch']
         self.api_call.start()
         self.checker.start()
 
@@ -146,6 +148,7 @@ class MyCog(commands.Cog):
     @tasks.loop(seconds=45.0)
     async def checker(self):
         hour, minute = datetime.datetime.now().strftime("%H %M").split(" ")
+        # print(type(self.newest_day), type(self.wordle_answer['days_since_launch']))
         if hour == 11 and (minute == 58 or minute == 59) and self.newest_day != self.wordle_answer['days_since_launch']:
         # if hour == "02" and (minute == "00" or minute == "01") and self.newest_day != self.wordle_answer['days_since_launch']:
             self.newest_day = self.wordle_answer['days_since_launch']
