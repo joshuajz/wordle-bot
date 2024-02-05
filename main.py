@@ -19,15 +19,14 @@ def call_api():
     return requests.get(f'https://www.nytimes.com/svc/wordle/v2/{datetime.date.today().strftime("%Y-%m-%d")}.json').json()
 
 def read_database():
-    with open('database.json', 'r') as database:
-        data = None
-        if (os.path.isfile(os.getcwd() + '\\database.json')) and (os.path.getsize(os.getcwd() + '\\database.json') > 0):
+    if (os.path.isfile(os.getcwd() + '/database.json')) and (os.path.getsize(os.getcwd() + '/database.json') > 0):
+        with open('database.json', 'r') as database:
+            data = {}
             data = json.load(database)
-        else:
-            data = {}
-        
-        if not(data):
-            data = {}
+            if not(data):
+                data = {}
+    else:
+        data = {}
     return data
 
 def read_stats():
@@ -79,11 +78,15 @@ class MyCog(commands.Cog):
         return today
     
     def best_answer(self, today: dict):
+        if len(today) < 1:
+            return []
         minimum = min(today.keys())
         return today[minimum]
 
         
     def worst_answer(self, today: dict):
+        if len(today) < 1:
+            return []
         maximum = max(today.keys())
         return today[maximum]
 
@@ -108,6 +111,9 @@ class MyCog(commands.Cog):
         result.sort(key=lambda a: a[1])
 
         stats_data = read_stats()
+
+        if not(stats_data):
+            return None
 
         if 'weekly' in stats_data:
             stats_data['weekly'][str(self.wordle_answer['days_since_launch'])] = {'winner': result[0], 'loser': result[1]}
@@ -148,14 +154,15 @@ class MyCog(commands.Cog):
     @tasks.loop(seconds=45.0)
     async def checker(self):
         hour, minute = datetime.datetime.now().strftime("%H %M").split(" ")
-        # print(type(self.newest_day), type(self.wordle_answer['days_since_launch']))
+        # print(type(self.newest_day), type(self.wordle_answer['days_sinces_launch']))
         if hour == 11 and (minute == 58 or minute == 59) and self.newest_day != self.wordle_answer['days_since_launch']:
-        # if hour == "02" and (minute == "00" or minute == "01") and self.newest_day != self.wordle_answer['days_since_launch']:
             self.newest_day = self.wordle_answer['days_since_launch']
         else:
             return
         
-        embed = create_embed('Wordle Recap', f'**#{self.wordle_answer["days_since_launch"]}** *{self.wordle_answer["solution"]}* - {self.wordle_answer["print_date"]}', 'orange')
+        #! TODO: Consider when only one person submits the worlde, they will currently both win and lose
+
+        embed = create_embed('Wordle Recap', f'**#{self.wordle_answer["days_since_launch"]}** ||*{self.wordle_answer["solution"]}*|| - {self.wordle_answer["print_date"]}', 'orange')
         
         guild = await client.fetch_guild(int(os.getenv('server')))
         channel = await guild.fetch_channel(int(os.getenv('channel_id')))
@@ -168,9 +175,14 @@ class MyCog(commands.Cog):
             best_answer = best_answer[0]
             result = f'<@{best_answer[0]}> with **{best_answer[1]["ratio"]}**:'
             for s in best_answer[1]['board']:
-                print('s', s)
                 result += "\n" + s
             add_field(embed, f'Winner!', result, True)
+        else:
+            for bf in best_answer:
+                result = f'<@{bf[0]}> with **{(bf[1])["ratio"]}**:'
+                for s in bf[1]['board']:
+                    result += "\n" + s
+                add_field(embed, "Winner!", result, True)
 
         if len(worst_answer) == 1:
             worst_answer = worst_answer[0]
@@ -181,12 +193,13 @@ class MyCog(commands.Cog):
 
         # Weekly Average
         averages = self.weekly_average()
-        if len(averages) != 0:
+            
+        if averages and len(averages) != 0:
             averages_string = f'<@{averages[0][0]}>: {averages[0][1]}/6'
             for avg in range(1, len(averages), 1):
                 averages_string += '\n'
                 averages_string += f'<@{averages[avg][0]}>: {averages[avg][1]}/6'
-        add_field(embed, f'Weekly Averages', averages_string, False)
+            add_field(embed, f'Weekly Averages', averages_string, False)
 
         # Daily Average
         daily_average = self.daily_average()
@@ -208,7 +221,6 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    print('message.aut')
     if message.author == client.user:
         return
 
@@ -223,7 +235,7 @@ async def on_message(message):
     
     entry = {'worldle_date': date, 'ratio': ratio, 'date': str(datetime.datetime.now()), 'board': wordle_board}
 
-    data = read_database()    
+    data = read_database()
 
     with open('database.json', 'w') as database:
         if str(user_id) in data:
@@ -233,10 +245,10 @@ async def on_message(message):
 
         json.dump(data, database, indent=4)
 
-
-    
-
-
-
+env_variables = ['server', 'channel_id', 'token']
+for var in env_variables:
+    if not(os.getenv(var)):
+        print(f"Missing environement variable {var}")
+        exit(-1)
 
 client.run(os.getenv('token'))
