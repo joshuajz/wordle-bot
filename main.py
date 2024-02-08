@@ -69,7 +69,11 @@ class MyCog(commands.Cog):
         for player in data.keys():
             if player in data and str(self.wordle_answer['days_since_launch']) in (data[player]).keys():
                 wordle = data[player][str(self.wordle_answer['days_since_launch'])]
-                ratio = int(wordle['ratio'].split('/')[0])
+                ratio = wordle['ratio'].split('/')[0]
+                if ratio == "X":
+                    # Player wasn't able to complete the wordle
+                    continue
+                ratio = int(ratio)
                 if ratio in today:
                     today[ratio].append((player, wordle))
                 else:
@@ -78,6 +82,7 @@ class MyCog(commands.Cog):
         return today
     
     def best_answer(self, today: dict):
+        print(today)
         if len(today) < 1:
             return []
         minimum = min(today.keys())
@@ -100,9 +105,13 @@ class MyCog(commands.Cog):
                 if str(day) in data[user].keys():
                     day = str(day)
                     if user in averages:
+                        if data[user][day]['ratio'].split('/')[0] == "X":
+                            continue
                         averages[user][0] += int(data[user][day]['ratio'].split('/')[0])
                         averages[user][1] += 1
                     else:
+                        if data[user][day]['ratio'].split('/')[0] == "X":
+                            continue
                         averages[user] = [int(data[user][day]['ratio'].split('/')[0]), 1]
         result = []
         for user in averages.keys():
@@ -131,6 +140,8 @@ class MyCog(commands.Cog):
         data = read_database()
         for user in data.keys():
             if str(self.wordle_answer['days_since_launch']) in data[user].keys():
+                if data[user][str(self.wordle_answer['days_since_launch'])]['ratio'].split('/')[0] == "X":
+                    continue
                 average[0] += int(data[user][str(self.wordle_answer['days_since_launch'])]['ratio'].split('/')[0])
                 average[1] += 1
         
@@ -155,10 +166,10 @@ class MyCog(commands.Cog):
     async def checker(self):
         hour, minute = datetime.datetime.now().strftime("%H %M").split(" ")
         # print(type(self.newest_day), type(self.wordle_answer['days_sinces_launch']))
-        if hour == 11 and (minute == 58 or minute == 59) and self.newest_day != self.wordle_answer['days_since_launch']:
-            self.newest_day = self.wordle_answer['days_since_launch']
-        else:
-            return
+        # if hour == 11 and (minute == 58 or minute == 59) and self.newest_day != self.wordle_answer['days_since_launch']:
+        self.newest_day = self.wordle_answer['days_since_launch']
+        # else:
+            # return
         
         #! TODO: Consider when only one person submits the worlde, they will currently both win and lose
 
@@ -203,6 +214,7 @@ class MyCog(commands.Cog):
 
         # Daily Average
         daily_average = self.daily_average()
+        daily_average = [x for x in daily_average if x > 0]
         if len(daily_average) == 2:
             add_field(embed, f"Group's Daily Average", f"{daily_average[0]/daily_average[1]}/6", True)
 
