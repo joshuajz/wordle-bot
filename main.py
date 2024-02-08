@@ -166,10 +166,10 @@ class MyCog(commands.Cog):
     async def checker(self):
         hour, minute = datetime.datetime.now().strftime("%H %M").split(" ")
         # print(type(self.newest_day), type(self.wordle_answer['days_sinces_launch']))
-        # if hour == 11 and (minute == 58 or minute == 59) and self.newest_day != self.wordle_answer['days_since_launch']:
-        self.newest_day = self.wordle_answer['days_since_launch']
-        # else:
-            # return
+        if hour == 11 and (minute == 58 or minute == 59) and self.newest_day != self.wordle_answer['days_since_launch']:
+            self.newest_day = self.wordle_answer['days_since_launch']
+        else:
+            return
         
         #! TODO: Consider when only one person submits the worlde, they will currently both win and lose
 
